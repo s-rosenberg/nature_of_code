@@ -13,14 +13,8 @@ class PequeñoSer:
         self.canvas = canvas
         self.color = color
         self.pixel = pixel
-        self.recorrido = [(self.x,self.y)]
-
-    def display(self, leave_trail=True):
-        if leave_trail:
-            for punto in self.recorrido:
-                self.draw(punto[0],punto[1])
-        else:
-            self.draw(self.x, self.y)
+        
+    
     def draw(self, x, y):
         if self.pixel:
             pygame.draw.line(self.canvas, self.color, (x, y), (x, y))
@@ -31,7 +25,8 @@ class RandomWalker(PequeñoSer):
     
     def __init__(self, x:int, y:int, canvas: pygame.Surface, color=BLACK, pixel=False):
         super().__init__(x, y, canvas, color, pixel)        
-    
+        self.recorrido = [(self.x,self.y)]
+        
     def step(self):
         choice = random.randint(0,3)
         if choice == 0:
@@ -43,3 +38,10 @@ class RandomWalker(PequeñoSer):
         else: 
             self.y -= 1
         self.recorrido.append((self.x,self.y))
+
+    def display(self, leave_trail=True):
+        if leave_trail:
+            for punto in self.recorrido:
+                super().draw(punto[0],punto[1])
+        else:
+            super().draw(self.x, self.y)
