@@ -1,15 +1,19 @@
 import time
 import pygame
-from random_walker import RandomWalker
+from random_walker import RandomWalker, DownRightRandomWalker, RandomFollower
 
 pygame.init()
 SIZE = 800,600
 screen = pygame.display.set_mode(SIZE)
 WHITE = (255,255,255)
 BLACK = (0,0,0)
+RED = (255,0,0)
+GREEN = (0,255, 0)
 run = True
 
 walker = RandomWalker(SIZE[0]/2,SIZE[1]/2,screen,pixel=True)
+dr_walker = DownRightRandomWalker(SIZE[0]/2,SIZE[1]/2,screen,color=RED,pixel=True)
+follower = RandomFollower(SIZE[0]/2,SIZE[1]/2,screen,color=GREEN,pixel=True)
 
 while run:
     
@@ -26,6 +30,11 @@ while run:
     # dibujo al walker
     walker.display()
     walker.step()
+    # dibujo al dr_walker
+    dr_walker.display()
+    dr_walker.book_step()
     # time.sleep(0.1)
+    follower.display()
+    follower.step()
     pygame.display.flip()
 pygame.quit()
