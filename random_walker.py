@@ -1,4 +1,3 @@
-from cmath import pi
 import random
 import pygame
 
@@ -27,9 +26,6 @@ class PequeñoSer:
             pygame.draw.line(self.canvas, self.color, (x, y), (x, y))
         else:
             pygame.draw.circle(self.canvas, self.color, (x, y), 1)
-    
-    # TODO que deje un recorrido
-    # se puede appendear a una lista ? y que displayee eso tambien
 
 class RandomWalker(PequeñoSer):
     
