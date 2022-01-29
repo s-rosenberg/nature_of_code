@@ -9,7 +9,7 @@ WHITE = (255,255,255)
 BLACK = (0,0,0)
 run = True
 
-walker = RandomWalker(SIZE[0]/2,SIZE[1]/2,screen)
+walker = RandomWalker(SIZE[0]/2,SIZE[1]/2,screen,pixel=True)
 
 while run:
     
@@ -26,6 +26,6 @@ while run:
     # dibujo al walker
     walker.display()
     walker.step()
-    time.sleep(0.1)
+    # time.sleep(0.1)
     pygame.display.flip()
 pygame.quit()
