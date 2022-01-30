@@ -7,18 +7,19 @@ WHITE = (255,255,255)
 
 class PequeñoSer:
 
-    def __init__(self, x:int, y:int, canvas: pygame.Surface, color=BLACK, pixel=False):
+    def __init__(self, x:int, y:int, canvas: pygame.Surface, color=BLACK, pixel=False, radio:float = 1):
         self.x = x
         self.y = y
         self.canvas = canvas
         self.color = color
         self.pixel = pixel
-        
+        self.radio = radio
+
     def draw(self, x, y):
         if self.pixel:
             pygame.draw.line(self.canvas, self.color, (x, y), (x, y))
         else:
-            pygame.draw.circle(self.canvas, self.color, (x, y), 1)
+            pygame.draw.circle(self.canvas, self.color, (x, y), self.radio)
 
 class RandomWalker(PequeñoSer):
     
@@ -26,9 +27,9 @@ class RandomWalker(PequeñoSer):
         super().__init__(x, y, canvas, color, pixel)        
         self.recorrido = [(self.x,self.y)]
         
-    def step(self):
-        step_x = random.randint(-1, 1)
-        step_y = random.randint(-1, 1)
+    def step(self, step_x=None, step_y=None):
+        step_x = step_x if step_x else random.randint(-1, 1)
+        step_y = step_y if step_y else random.randint(-1, 1)
         self.x += step_x
         self.y += step_y
         self.recorrido.append((self.x,self.y))
@@ -39,6 +40,14 @@ class RandomWalker(PequeñoSer):
                 super().draw(punto[0],punto[1])
         else:
             super().draw(self.x, self.y)
+    
+    def gaussian_step(self):
+        mu = 0
+        sigma = 1
+        step_x = random.gauss(mu,sigma)
+        step_y = random.gauss(mu,sigma)
+
+        self.step(step_x, step_y)
 
 class DownRightRandomWalker(RandomWalker):
     # Ex I.1 Create a random walker that has a tendency to move down and to the right

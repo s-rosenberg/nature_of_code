@@ -1,3 +1,4 @@
+from random import gauss
 import time
 import pygame
 from random_walker import RandomWalker, DownRightRandomWalker, RandomFollower
@@ -9,14 +10,15 @@ WHITE = (255,255,255)
 BLACK = (0,0,0)
 RED = (255,0,0)
 GREEN = (0,255, 0)
-run = True
 
 walker = RandomWalker(SIZE[0]/2,SIZE[1]/2,screen,pixel=True)
-dr_walker = DownRightRandomWalker(SIZE[0]/2,SIZE[1]/2,screen,color=RED,pixel=True)
-follower = RandomFollower(SIZE[0]/2,SIZE[1]/2,screen,color=GREEN,pixel=True)
+gauss_walker = RandomWalker(SIZE[0]/2,SIZE[1]/2,screen, color=RED,pixel=True)
+# dr_walker = DownRightRandomWalker(SIZE[0]/2,SIZE[1]/2,screen,color=RED,pixel=True)
+# follower = RandomFollower(SIZE[0]/2,SIZE[1]/2,screen,color=GREEN,pixel=True)
 
+run = True
 while run:
-    
+     
     for event in pygame.event.get():
         if event.type == pygame.QUIT: run = False
     
@@ -30,11 +32,14 @@ while run:
     # dibujo al walker
     walker.display()
     walker.step()
-    # dibujo al dr_walker
-    dr_walker.display()
-    dr_walker.book_step()
-    # time.sleep(0.1)
-    follower.display()
-    follower.step()
+    # dibujo al gauss_walker
+    gauss_walker.display()
+    gauss_walker.gaussian_step()
+    # # dibujo al dr_walker
+    # dr_walker.display()
+    # dr_walker.book_step()
+    # # time.sleep(0.1)
+    # follower.display()
+    # follower.step()
     pygame.display.flip()
 pygame.quit()
