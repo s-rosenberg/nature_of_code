@@ -31,10 +31,10 @@ while run:
     
     # dibujo al walker
     walker.display()
-    walker.step()
+    walker.custom_step()
     # dibujo al gauss_walker
-    gauss_walker.display()
-    gauss_walker.gaussian_step()
+    # gauss_walker.display()
+    # gauss_walker.gaussian_step()
     # # dibujo al dr_walker
     # dr_walker.display()
     # dr_walker.book_step()
