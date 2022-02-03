@@ -45,9 +45,10 @@ class RandomPoint(PequeñoSer):
         return color_num
 if __name__ == '__main__':
     pygame.init()
-    SIZE = 800, 600
+    SIZE = 600, 600
     screen = pygame.display.set_mode(SIZE)
     WHITE = (255,255,255)
+    BLACK = (0,0,0)
 
     mu = SIZE[0] / 2
     sigma = (SIZE[0] - mu) / 3
@@ -58,7 +59,7 @@ if __name__ == '__main__':
         for event in pygame.event.get():
             if event.type == pygame.QUIT: run = False
         
-        screen.fill(WHITE)
+        screen.fill(BLACK)
 
         random_point = RandomPoint(mu, sigma, screen,radio=2)
         random_points.append(random_point)
