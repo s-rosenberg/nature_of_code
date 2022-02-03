@@ -48,7 +48,34 @@ class RandomWalker(PequeñoSer):
         step_y = random.gauss(mu,sigma)
 
         self.step(step_x, step_y)
+    
+    def custom_step(self):
+        # Exercise I.6
+        # Use a custom probability distribution to vary the size of a step 
+        # taken by the random walker. The step size can be determined by influencing
+        # the range of values picked. Can you map the probability exponentially
+        # —i.e. making the likelihood that a value is picked equal to the value squared?
+        
+        step_size = self.custom_probability()
+        step_x = random.uniform(-step_size, step_size)
+        step_y = random.uniform(-step_size, step_size)
+        self.step(step_x, step_y)
 
+    def custom_probability(self, perlin=True):
+        if perlin:
+            pass
+            # TODO READ perlin noise 
+            # https://en.wikipedia.org/wiki/Perlin_noise
+        else:
+            return self.exponential_probability()
+    def exponential_probability(self):
+        while True:
+            random_number = random.uniform(0,10)
+            probability = random_number ** 2
+            random_number2 = random.uniform(0,1)
+            if random_number2 < probability / 100:
+                return random_number
+                    
 class DownRightRandomWalker(RandomWalker):
     # Ex I.1 Create a random walker that has a tendency to move down and to the right
     def __init__(self, x:int, y:int, canvas: pygame.Surface, color=BLACK, pixel=False):
