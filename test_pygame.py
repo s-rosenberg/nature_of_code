@@ -31,7 +31,7 @@ while run:
     
     # dibujo al walker
     walker.display()
-    walker.custom_step()
+    walker.perlin_step()
     # dibujo al gauss_walker
     # gauss_walker.display()
     # gauss_walker.gaussian_step()
