@@ -1,4 +1,5 @@
 import random
+from perlin_noise import PerlinNoise
 import pygame
 
 # colores
@@ -27,6 +28,10 @@ class RandomWalker(PequeñoSer):
         super().__init__(x, y, canvas, color, pixel)        
         self.recorrido = [(self.x,self.y)]
         
+        # perlin 
+        self.tx = 0
+        self.ty = 10000 
+
     def step(self, step_x=None, step_y=None):
         step_x = step_x if step_x else random.randint(-1, 1)
         step_y = step_y if step_y else random.randint(-1, 1)
@@ -61,13 +66,17 @@ class RandomWalker(PequeñoSer):
         step_y = random.uniform(-step_size, step_size)
         self.step(step_x, step_y)
 
-    def custom_probability(self, perlin=True):
-        if perlin:
-            pass
-            # TODO READ perlin noise 
-            # https://en.wikipedia.org/wiki/Perlin_noise
-        else:
-            return self.exponential_probability()
+    def custom_probability(self):
+        return self.exponential_probability()
+
+    def perlin_step(self):
+        noise = PerlinNoise()
+        step_x = self.map_range(noise(self.tx), 0, 1, 0,self.canvas.get_width()//20)
+        step_y = self.map_range(noise(self.ty), 0, 1, 0,self.canvas.get_height()//20)
+        self.tx += 0.01
+        self.ty += 0.01
+        self.step(step_x,step_y)
+        
     def exponential_probability(self):
         while True:
             random_number = random.uniform(0,10)
@@ -75,7 +84,12 @@ class RandomWalker(PequeñoSer):
             random_number2 = random.uniform(0,1)
             if random_number2 < probability / 100:
                 return random_number
-                    
+
+    @staticmethod
+    def map_range(value, start1, stop1, start2, stop2):
+        # fuente https://stackoverflow.com/questions/57739846/is-there-a-processing-map-equivalent-for-pytho
+        return (value - start1) / (stop1 - start1) * (stop2 - start2) + start2
+
 class DownRightRandomWalker(RandomWalker):
     # Ex I.1 Create a random walker that has a tendency to move down and to the right
     def __init__(self, x:int, y:int, canvas: pygame.Surface, color=BLACK, pixel=False):
