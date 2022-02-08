@@ -1,6 +1,7 @@
 import random
 from perlin_noise import PerlinNoise
 import pygame
+# TODO REVISAR DISPLAY Y DRAW
 
 # colores
 BLACK = (0,0,0)
