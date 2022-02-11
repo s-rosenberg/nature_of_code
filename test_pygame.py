@@ -1,4 +1,3 @@
-from random import gauss
 import time
 import pygame
 from random_walker import RandomWalker, DownRightRandomWalker, RandomFollower

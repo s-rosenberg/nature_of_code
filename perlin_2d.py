@@ -3,8 +3,10 @@ usar perlin en 2d para hacer cosas copadas
 """
 
 from perlin_noise import PerlinNoise
+import perlin_noise
 import pygame
 from random_walker import PequeñoSer, RandomWalker
+from canvas import Canvas
 # import numpy as np
 WHITE = (255,255,255)
 BLACK = (0,0,0)
@@ -49,19 +51,24 @@ class PerlinSurface():
 
 if __name__ == '__main__':
     # TODO una clase de canvas
-    pygame.init()
-    SIZE = 800, 600
-    screen = pygame.display.set_mode(SIZE)
-    run = True
-    perlin_surface = PerlinSurface(screen,0.1)
-    perlin_surface.populate_surface(fast=True)
-    # perlin_surface.show_surface()
-    # pygame.display.flip()
-    while run:
+    # pygame.init()
+    # SIZE = 800, 600
+    # screen = pygame.display.set_mode(SIZE)
+    # run = True
+    # perlin_surface = PerlinSurface(screen,0.1)
+    # perlin_surface.populate_surface(fast=True)
+    # # perlin_surface.show_surface()
+    # # pygame.display.flip()
+    # while run:
         
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT: run = False
+    #     for event in pygame.event.get():
+    #         if event.type == pygame.QUIT: run = False
         
-        
-        
-    pygame.quit()
+    # pygame.quit()
+    canvas = Canvas(800,600)
+    screen = canvas.get_surface()
+    perlin_surface = PerlinSurface(screen)
+    canvas.loop_function = perlin_surface.populate_surface(fast=True)
+    canvas.kill_event = pygame.QUIT
+    canvas.main()
+    del canvas
