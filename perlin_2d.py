@@ -5,7 +5,7 @@ usar perlin en 2d para hacer cosas copadas
 from perlin_noise import PerlinNoise
 import perlin_noise
 import pygame
-from random_walker import PequeñoSer, RandomWalker
+from random_walker import Pixel, RandomWalker
 from canvas import Canvas
 # import numpy as np
 WHITE = (255,255,255)
@@ -30,7 +30,7 @@ class PerlinSurface():
                 
                 bright = int(RandomWalker.map_range(noise,-1,1,0,255))
                 color = (bright, bright, bright)
-                pequeño_ser = PequeñoSer(x,y,self.canvas,color,True)
+                pequeño_ser = Pixel(x,y,self.canvas,color,True)
                 if fast:
                     # updatear de a cachitos la patanalla (ir barriendo tipo pantalla tele)
                     # definir rect al rededor de pequeño ser

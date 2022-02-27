@@ -7,7 +7,7 @@ import pygame
 BLACK = (0,0,0)
 WHITE = (255,255,255)
 
-class PequeñoSer:
+class Pixel:
 
     def __init__(self, x:int, y:int, canvas: pygame.Surface, color=BLACK, pixel=False, radio:float = 1):
         self.x = x
@@ -23,7 +23,7 @@ class PequeñoSer:
         else:
             pygame.draw.circle(self.canvas, self.color, (x, y), self.radio)
 
-class RandomWalker(PequeñoSer):
+class RandomWalker(Pixel):
     
     def __init__(self, x:int, y:int, canvas: pygame.Surface, color=BLACK, pixel=False):
         super().__init__(x, y, canvas, color, pixel)        
@@ -33,9 +33,14 @@ class RandomWalker(PequeñoSer):
         self.tx = 0
         self.ty = 10000 
 
-    def step(self, step_x=None, step_y=None):
+    def get_step(self, step_x=None, step_y=None):
         step_x = step_x if step_x else random.randint(-1, 1)
         step_y = step_y if step_y else random.randint(-1, 1)
+        return step_x, step_y
+    
+    def step(self, step_x=None, step_y=None):
+        step_x, step_y = self.get_step(step_x, step_y)
+
         self.x += step_x
         self.y += step_y
         self.recorrido.append((self.x,self.y))

@@ -6,9 +6,9 @@
 
 import random
 import pygame
-from random_walker import PequeñoSer
+from random_walker import Pixel
 
-class RandomPoint(PequeñoSer):
+class RandomPoint(Pixel):
     """
     TODO: que el color caiga acorde a la posicion
     """    
