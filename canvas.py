@@ -2,7 +2,7 @@ import pygame
 
 class Canvas:
 
-    def __init__(self, size, pre_function=None, loop_function=None, kill_event=None):
+    def __init__(self, size:tuple, pre_function=None, loop_function=None, kill_event=None):
         self.size = size
         self.pre_function = pre_function
         self.loop_function = loop_function
@@ -15,8 +15,7 @@ class Canvas:
         run = True
         while run:
             for event in pygame.event.get():
-                if event.type == self.kill_event: 
-                    print('DEBERIA CERRAR!!')
+                if event.type == self.kill_event:
                     run = False
             if self.loop_function : self.loop_function.__call__()
         # DATAZA para llamar funciones pasadas como variables usar el __call__()

@@ -15,6 +15,12 @@ class Vector:
         self.x = x
         self.y = y
     
+    def __repr__(self):
+        return f'{self.__class__.__name__}({self.x},{self.y})'
+
+    def __str__(self):
+        return f'({self.x},{self.y})'
+
     def __suma(self, other_v):
         self.x += other_v.x
         self.y += other_v.y
@@ -25,9 +31,17 @@ class Vector:
 
         return new_vector
 
+    def __neg(self):
+        self.__multiplicacion(-1)
+
+    def __neg__(self):
+        new_vector = copy(self)
+        new_vector.__neg()
+
+        return new_vector
+
     def __resta(self, other_v):
-        self.x -= other_v.x
-        self.y += other_v.y
+        self.__suma(-other_v)
 
     def __sub__(self, other_v):
         new_vector = copy(self)
@@ -72,6 +86,17 @@ class Vector:
         mag = self.mag()
         self.__division(mag)
 
+    def limit(self, max):
+        if self.mag() > max:
+            self.normalize()
+            self.__multiplicacion(max)
+
+    def flip_horizontal(self):
+        self.x *= -1
+    
+    def flip_vertical(self):
+        self.y *= -1
+
     @staticmethod
     def vector_mul(vector_1, vector2):
         raise NotImplementedError
@@ -82,6 +107,13 @@ class Vector:
         new_vector.__multiplicacion(scalar)
 
         return new_vector
+
+    @classmethod
+    def random_vector(cls, min_x, max_x, min_y, max_y):
+        x = random.uniform(min_x, max_x)
+        y = random.uniform(min_y, max_y)
+
+        return cls(x,y)
 
 class RandomVectorWalker(Pixel):
     
