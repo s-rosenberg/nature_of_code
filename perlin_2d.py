@@ -3,7 +3,6 @@ usar perlin en 2d para hacer cosas copadas
 """
 
 from perlin_noise import PerlinNoise
-import perlin_noise
 import pygame
 from random_walker import Pixel, RandomWalker
 from canvas import Canvas

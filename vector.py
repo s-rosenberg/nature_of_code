@@ -109,11 +109,19 @@ class Vector:
         return new_vector
 
     @classmethod
-    def random_vector(cls, min_x, max_x, min_y, max_y):
+    def random_vector(cls, min_x=None, max_x=None, min_y=None, max_y=None):
+        
+        normalize = False
+
+        if not min_x and not min_y and not max_x and not max_y:
+            min_x = min_y = -1
+            max_x = max_y = 1
+            normalize = True
+        
         x = random.uniform(min_x, max_x)
         y = random.uniform(min_y, max_y)
 
-        return cls(x,y)
+        return cls(x,y).normalized() if normalize else cls(x,y)
 
 class RandomVectorWalker(Pixel):
     

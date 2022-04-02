@@ -1,6 +1,8 @@
 from vector import Vector
 from canvas import Canvas
 import pygame
+import random
+from perlin_noise import PerlinNoise
 
 # colores
 BLACK = (0,0,0)
@@ -35,8 +37,7 @@ class Mover:
             self.aceleration.flip_vertical()
 
     def random_aceleration(self, ratio=0.01):
-        aceleration = Vector.random_vector(-1,1,-1,1)
-        aceleration.normalize()
+        aceleration = Vector.random_vector()
         aceleration *= ratio
         
         return aceleration
@@ -57,32 +58,96 @@ class MoverAcelerable(Mover):
         key_event = self.get_key_press_event(events)
         if key_event:
             if key_event.key == pygame.K_UP:
-                print('arriba')
                 self.acelerar()
             elif key_event.key == pygame.K_DOWN:
-                print('abajo')
                 self.desacelerar()
         
     def get_key_press_event(self, events):
         for event in events:
             if event.type == pygame.KEYDOWN:
                 return event
+
+class MoverRandom(Mover):
+    def __init__(self, canvas: Canvas, position: Vector = None, velocity: Vector = None, aceleration: Vector = None, max_velocity=10, aceleration_max=2):
+        super().__init__(canvas, position, velocity, aceleration, max_velocity)
+        self.aceleration = aceleration if aceleration else Vector.random_vector() 
+        self.aceleration_max = aceleration_max
+    
+    def change_aceleration(self):
+        self.aceleration = Vector.random_vector()
+        self.aceleration *= random.uniform(0, self.aceleration_max)
+        
+    def control_aceleration(self, events=None):
+        self.change_aceleration()
+        self.velocity += self.aceleration
+
+class MoverRandomPerlin(MoverRandom):
+    def __init__(self, canvas: Canvas, position: Vector = None, velocity: Vector = None, aceleration: Vector = None, max_velocity=10, aceleration_max=2, delta_noise=0.01):
+        super().__init__(canvas, position, velocity, aceleration, max_velocity, aceleration_max)
+        self.noise = PerlinNoise()
+        self.index = 0
+        self.delta_noise = delta_noise
+
+    def change_aceleration(self):
+        self.index += self.delta_noise
+        noise = self.noise(self.index)
+        self.aceleration = Vector.random_vector()
+        self.aceleration *= noise
+        
+class MoverHaciaMouse(Mover):
+    def __init__(self, canvas: Canvas, position: Vector = None, velocity: Vector = None, 
+        aceleration: Vector = Vector(0,0), max_velocity=10, aceleration_ratio = 0.5, 
+        gravitational=False, min_distance=5, max_distance=100):
+        super().__init__(canvas, position, velocity, aceleration, max_velocity)
+        self.aceleration_ratio = aceleration_ratio
+        self.gravitational = gravitational
+        self.min_distance = min_distance
+        self.max_distance = max_distance
+
+    def get_mouse_pos(self):
+        return pygame.mouse.get_pos()
+    
+    def control_aceleration(self, events=None):
+        mouse_x, mouse_y = self.get_mouse_pos()
+        mouse_vector = Vector(mouse_x, mouse_y)
+        
+        aceleration_ratio = self.aceleration_ratio
+        self.aceleration = mouse_vector - self.position
+        if self.gravitational:
+            # Ej 1.8 Try implementing the above example with a variable 
+            # magnitude of acceleration, stronger 
+            # when it is either closer or farther away.
+            distance = self.aceleration.mag() 
             
+            if distance < self.min_distance or distance > self.max_distance:
+                aceleration_ratio *= 1.05
+        self.aceleration.normalize()
+        self.aceleration *= aceleration_ratio
+        self.velocity += self.aceleration
 
 if __name__ == '__main__':
     SIZE = 800, 600
     canvas = Canvas(SIZE)
     screen = canvas.get_surface()
     # init del Mover
-    mover = MoverAcelerable(canvas, velocity=Vector(0,0),max_velocity=10)
+    # mover = MoverHaciaMouse(canvas, velocity=Vector(0,0), 
+    #     max_velocity=1, aceleration_ratio=0.01, gravitational=True)
+    # mover_2 = MoverRandomPerlin(canvas, velocity=Vector(0,0), max_velocity=1)
     
+    # array de movers
     
+    movers = [MoverHaciaMouse(canvas, 
+                    velocity=Vector(0,0), 
+                    max_velocity=1, 
+                    aceleration_ratio=0.005
+                    ) for idx in range(10)]
     def loop_function(events):
         
         screen.fill(WHITE)
-        mover.display()
-        mover.update(events)
-        mover.check_bordes()
+        for mover in movers:
+            mover.display()
+            mover.update(events)
+            mover.check_bordes()    
         pygame.display.flip()
     
     canvas.loop_function = loop_function
