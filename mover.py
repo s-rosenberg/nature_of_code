@@ -1,4 +1,4 @@
-from vector import Vector
+from vector import Vector, PerlinVector
 from canvas import Canvas
 import pygame
 import random
@@ -25,17 +25,20 @@ class Mover:
         self.velocity.limit(self.max_velocity)
         self.position += self.velocity
     
-    def display(self):
-        pygame.draw.circle(self.surface, center= (self.position.x, self.position.y), color=BLACK, radius=10)
+    def display(self, radius=1):
+        pygame.draw.circle(self.surface, center= (self.position.x, self.position.y), color=BLACK, radius=10*radius)
 
     def check_bordes(self, flip=True):
         if self.position.x >= self.max_x or self.position.x <= 0:
             self.velocity.flip_horizontal()
             self.aceleration.flip_horizontal()
+            
+            return True
         if self.position.y >= self.max_y or self.position.y <= 0:
             self.velocity.flip_vertical()
             self.aceleration.flip_vertical()
-
+            return True
+            
     def random_aceleration(self, ratio=0.01):
         aceleration = Vector.random_vector()
         aceleration *= ratio
@@ -125,6 +128,32 @@ class MoverHaciaMouse(Mover):
         self.aceleration *= aceleration_ratio
         self.velocity += self.aceleration
 
+class NewtonMover(Mover):
+    # un mover al que se le pueden aplicar fuerzas
+    def __init__(self, canvas: Canvas, mass: float = 1, position: Vector = None, 
+    velocity: Vector = None, aceleration: Vector = None, max_velocity=10, forces=[]):
+        super().__init__(canvas, position, velocity, aceleration, max_velocity)
+        self.forces = forces
+        self.mass = mass
+
+    def apply_force(self, force:Vector):
+        force /= self.mass
+        self.aceleration += force
+    
+    def control_aceleration(self, events=None):
+        for force in self.forces:
+            self.apply_force(force)
+        super().control_aceleration(events)
+        self.aceleration *= 0
+
+    def check_bordes(self, flip=True, damping=0.75):
+        bounce = super().check_bordes(flip)
+        if bounce: self.velocity *= damping # reducir velocidad por impacto
+
+    def display(self, radius=1):
+        radius *= self.mass
+        super().display(radius)  
+
 if __name__ == '__main__':
     SIZE = 800, 600
     canvas = Canvas(SIZE)
@@ -136,18 +165,39 @@ if __name__ == '__main__':
     
     # array de movers
     
-    movers = [MoverHaciaMouse(canvas, 
-                    velocity=Vector(0,0), 
-                    max_velocity=1, 
-                    aceleration_ratio=0.005
-                    ) for idx in range(10)]
+    # movers = [MoverHaciaMouse(canvas, 
+    #                 velocity=Vector(0,0), 
+    #                 max_velocity=1, 
+    #                 aceleration_ratio=0.005
+    #                 ) for idx in range(10)]
+
+    vel_inicial = Vector(0,0)
+    ac_inicial = Vector(0,0)
+    pos_inicial = Vector(SIZE[0] / 2, 50)
+    # pos_inicial_2 = Vector(100,SIZE[1]-50)
+    gravity = Vector(0,0.001)
+    wind_force = PerlinVector(0,0)
+    # mover_1 = NewtonMover(canvas, velocity=vel_inicial, aceleration=ac_inicial, position=pos_inicial,forces=[gravity, wind_force])
+    # mover_2 = NewtonMover(canvas, mass= 0.5, velocity=vel_inicial, aceleration=ac_inicial, position=pos_inicial,forces=[gravity, wind_force])
+    # movers = [mover_1, mover_2]
+    movers = [
+        NewtonMover(
+            canvas, 
+            velocity=vel_inicial, 
+            aceleration=ac_inicial, 
+            position=pos_inicial,
+            forces=[gravity, wind_force],
+            mass=mass/10)
+            for mass in range(1, 20, 1)]
+
     def loop_function(events):
         
         screen.fill(WHITE)
         for mover in movers:
             mover.display()
             mover.update(events)
-            mover.check_bordes()    
+            mover.check_bordes(damping=1) 
+            wind_force.get_new_direction()   
         pygame.display.flip()
     
     canvas.loop_function = loop_function
