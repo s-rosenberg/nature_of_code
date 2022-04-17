@@ -109,6 +109,13 @@ class Vector:
 
         return new_vector
 
+    @staticmethod
+    def get_distance(vector_1, vector_2):
+        return math.sqrt(
+            (vector_1.x - vector_2.x)**2 +
+            (vector_1.y - vector_2.y)**2
+        )
+        
     @classmethod
     def random_vector(cls, min_x=None, max_x=None, min_y=None, max_y=None):
         
