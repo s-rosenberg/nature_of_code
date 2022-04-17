@@ -4,6 +4,7 @@ from random_walker import Pixel
 from canvas import Canvas
 import pygame
 import random
+from perlin_noise import PerlinNoise
 from copy import copy
 
 BLACK = (0,0,0)
@@ -21,35 +22,35 @@ class Vector:
     def __str__(self):
         return f'({self.x},{self.y})'
 
-    def __suma(self, other_v):
+    def suma(self, other_v):
         self.x += other_v.x
         self.y += other_v.y
 
     def __add__(self, other_v):
         new_vector = copy(self)
-        new_vector.__suma(other_v)
+        new_vector.suma(other_v)
 
         return new_vector
 
-    def __neg(self):
-        self.__multiplicacion(-1)
+    def neg(self):
+        self.multiplicacion(-1)
 
     def __neg__(self):
         new_vector = copy(self)
-        new_vector.__neg()
+        new_vector.neg()
 
         return new_vector
 
-    def __resta(self, other_v):
-        self.__suma(-other_v)
+    def resta(self, other_v):
+        self.suma(-other_v)
 
     def __sub__(self, other_v):
         new_vector = copy(self)
-        new_vector.__resta(other_v)
+        new_vector.resta(other_v)
 
         return new_vector
 
-    def __multiplicacion(self, obj):
+    def multiplicacion(self, obj):
         # obj: int or float
         self.x *= obj
         self.y *= obj
@@ -60,14 +61,14 @@ class Vector:
         elif type(obj) in (int, float):
             return self.scalar_mul(self, obj)
     
-    def __division(self, obj):
+    def division(self, obj):
         if obj != 0:
-            self.__multiplicacion(obj ** -1)
+            self.multiplicacion(obj ** -1)
         
     def __truediv__(self, obj):
         if type(obj) in (int, float):
             new_vector = copy(self)
-            new_vector.__division(obj)
+            new_vector.division(obj)
 
             return new_vector
 
@@ -84,12 +85,12 @@ class Vector:
     def normalize(self):
         # convierte a vector unitario
         mag = self.mag()
-        self.__division(mag)
+        self.division(mag)
 
     def limit(self, max):
         if self.mag() > max:
             self.normalize()
-            self.__multiplicacion(max)
+            self.multiplicacion(max)
 
     def flip_horizontal(self):
         self.x *= -1
@@ -104,7 +105,7 @@ class Vector:
     @staticmethod
     def scalar_mul(vector, scalar):
         new_vector = copy(vector)
-        new_vector.__multiplicacion(scalar)
+        new_vector.multiplicacion(scalar)
 
         return new_vector
 
@@ -149,6 +150,25 @@ class RandomVectorWalker(Pixel):
                 super().draw(posicion.x, posicion.y)
         else:
             super().draw(posicion.x, posicion.y)
+
+class PerlinVector(Vector):
+    def __init__(self, x, y, delta_noise = 0.05):
+        super().__init__(x, y)
+        self.noise = PerlinNoise()
+        self.idx_x = 0
+        self.idx_y = 10000
+        self.delta_noise = delta_noise
+    
+    def get_new_direction(self):
+        self.idx_x += self.delta_noise
+        self.idx_y += self.delta_noise
+        noise_x = self.noise(self.idx_x)
+        noise_y = self.noise(self.idx_y)
+        
+        self.x = noise_x
+        self.y = noise_y
+        self.normalize()
+        self.multiplicacion(0.0005)
 
 if __name__ == '__main__':
     SIZE = 800, 600
