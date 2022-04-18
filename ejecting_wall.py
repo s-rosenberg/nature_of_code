@@ -1,3 +1,4 @@
+
 from shutil import move
 from vector import Vector
 from mover import NewtonMover
@@ -15,14 +16,59 @@ how far the object is from an edge—
 i.e., the closer it is, the stronger the force?
 """
 def eject(mover:NewtonMover):
-    near = near_to_wall(mover)
-    # TODO: como esta implementado ahora 
-    # funciona muy similar al check bordes
-    # modificar para que la fuerza sea inversamente 
-    # proporcional a la distancia
-    new_force = near * 1.5
+    near = near_to_wall(mover, distance=100)
+    nearest_wall = get_nearest_wall(mover)
+    distance_to_wall = Vector.get_distance(mover.position, nearest_wall)
+    new_force = near / distance_to_wall
     mover.forces = [new_force]
-    
+
+def get_nearest_wall(mover: NewtonMover):
+
+    #################################################
+    #                       #                       #
+    #   primer cuadrante    #   segundo cuadrante   #
+    #                       #                       #
+    #################################################
+    #                       #                       #
+    #   tercer cuadrante    #   cuarto cuadrante    #
+    #                       #                       #
+    #################################################
+
+    pos_x = mover.position.x
+    pos_y = mover.position.y
+    max_x = mover.max_x
+    max_y = mover.max_y
+    izquierda = pos_x <= max_x / 2
+    arriba = pos_y <= max_y / 2
+
+    if izquierda:
+        if arriba: 
+            # primer cuadrante
+            if pos_x >= pos_y:
+                wall = Vector(pos_x, 0)
+            else:
+                wall = Vector(0, pos_y)
+        else:
+            # tercer cuadrante
+            if pos_x >= mover.max_y - pos_y:
+                wall = Vector(pos_x, max_y)
+            else:
+                wall = Vector(0, pos_y)
+    else:
+        if arriba:
+            # segundo cuadrante
+            if max_x - pos_x >= pos_y:
+                wall = Vector(pos_x, 0)
+            else:
+                wall = Vector(0, pos_y) 
+        else:
+            # cuarto cuadrante
+            if max_x - pos_x >= max_y - pos_y:
+                wall =  Vector(pos_x, max_y)
+            else:
+                wall = Vector(max_x, pos_y)
+    return wall
+
 def near_to_wall(mover:NewtonMover, distance=10):
     max_x = mover.max_x
     max_y = mover.max_y
