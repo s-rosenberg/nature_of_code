@@ -60,7 +60,7 @@ def get_nearest_wall(mover: NewtonMover):
             if max_x - pos_x >= pos_y:
                 wall = Vector(pos_x, 0)
             else:
-                wall = Vector(0, pos_y) 
+                wall = Vector(max_x, pos_y) 
         else:
             # cuarto cuadrante
             if max_x - pos_x >= max_y - pos_y:

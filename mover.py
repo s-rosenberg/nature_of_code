@@ -3,7 +3,7 @@ from canvas import Canvas
 import pygame
 import random
 from perlin_noise import PerlinNoise
-
+from copy import copy
 # colores
 BLACK = (0,0,0)
 WHITE = (255,255,255)
@@ -176,7 +176,7 @@ if __name__ == '__main__':
     pos_inicial = Vector(SIZE[0] / 2, 50)
     # pos_inicial_2 = Vector(100,SIZE[1]-50)
     gravity = Vector(0,0.001)
-    wind_force = PerlinVector(0,0)
+    wind_force = Vector(0.00001,0)
     # mover_1 = NewtonMover(canvas, velocity=vel_inicial, aceleration=ac_inicial, position=pos_inicial,forces=[gravity, wind_force])
     # mover_2 = NewtonMover(canvas, mass= 0.5, velocity=vel_inicial, aceleration=ac_inicial, position=pos_inicial,forces=[gravity, wind_force])
     # movers = [mover_1, mover_2]
@@ -186,7 +186,7 @@ if __name__ == '__main__':
             velocity=vel_inicial, 
             aceleration=ac_inicial, 
             position=pos_inicial,
-            forces=[gravity, wind_force],
+            forces=[gravity*mass/10, wind_force],
             mass=mass/10)
             for mass in range(1, 20, 1)]
 
@@ -194,10 +194,16 @@ if __name__ == '__main__':
         
         screen.fill(WHITE)
         for mover in movers:
+            friction = copy(mover.velocity)
+            friction *= -1       
+            friction.normalize()
+            friction *= 0.0001
+            mover.forces.append(friction)
             mover.display()
             mover.update(events)
-            mover.check_bordes(damping=1) 
-            wind_force.get_new_direction()   
+            mover.check_bordes(damping=1)
+            mover.forces.pop() # sino se me descontrola mas, se seguian agregando fuerzas de friccion :(
+            # wind_force.get_new_direction()   
         pygame.display.flip()
     
     canvas.loop_function = loop_function
