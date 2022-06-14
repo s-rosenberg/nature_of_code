@@ -31,5 +31,13 @@ class Canvas:
     def get_surface(self) -> pygame.Surface:
         return self.screen    
     
+    def get_x_size(self):
+        return self.size[0]
+
+    def get_y_size(self):
+        return self.size[1]
+        
     def __del__(self):
         pygame.quit()
+
+        
