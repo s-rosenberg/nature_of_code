@@ -174,6 +174,8 @@ class NewtonMover(Mover):
     def drag(self, liquid: Liquid):
         speed = self.velocity.mag()
         drag_magnitude = liquid.coefficient_of_drag * speed ** 2
+        if self.width:
+            drag_magnitude *= self.width / 5
         drag = -self.velocity
         drag.normalize()
         drag.multiplicacion(drag_magnitude)

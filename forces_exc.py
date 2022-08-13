@@ -58,7 +58,7 @@ def exc_2_6():
     """
     mass = 1
     movers = [
-        RectMover(
+        NewtonMover(
             canvas, 
             velocity=vel_inicial, 
             aceleration=ac_inicial, 
