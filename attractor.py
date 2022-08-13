@@ -1,9 +1,8 @@
 from vector import Vector
+from ser import Ser
+from canvas import Canvas
 
-class Attractor:
-    location: Vector
-    mass: float
-
-    def __init__(self, location:Vector, mass:float) -> None:
-        self.location = location
-        self.mass = mass
+class Attractor(Ser):
+    
+    def __init__(self, canvas: Canvas, position: Vector, mass: float, radius: float = None, height: float = None, width: float = None) -> None:
+        super().__init__(canvas, position, mass, radius, height, width)
