@@ -4,10 +4,7 @@ from canvas import Canvas
 from mover import NewtonMover
 import pygame
 
-def constrain(value:float, low:float, high:float):
-    if value > high: return high
-    elif value < low: return low
-    else: return value
+
 
 G = 0.4
 WHITE = (255,255,255)
@@ -17,22 +14,6 @@ class Attractor(Ser):
     
     def __init__(self, canvas: Canvas, position: Vector, mass: float, radius: float = None, height: float = None, width: float = None) -> None:
         super().__init__(canvas, position, mass, radius, height, width)
-
-    def attract(self, mover:NewtonMover) -> Vector:
-
-        distance, direction = self.get_distance_and_direction(mover)
-        strength = (G * self.mass * mover.mass) / (distance * distance)
-        force = strength * direction
-
-        return force
-
-    def get_distance_and_direction(self, mover:NewtonMover) -> tuple[float,Vector]:
-        direction = self.position - mover.position
-        distance = direction.mag()
-        distance = constrain(distance, 5, 25)
-        direction.normalize()
-
-        return distance, direction
 
 if __name__ == '__main__':
     
