@@ -20,14 +20,19 @@ class Attractor(Ser):
 
     def attract(self, mover:NewtonMover) -> Vector:
 
-        force = self.position - mover.position 
-        distance = force.mag()
-        distance = constrain(distance, 5, 25)
-        force.normalize() # direccion
+        distance, direction = self.get_distance_and_direction(mover)
         strength = (G * self.mass * mover.mass) / (distance * distance)
-        force *= strength
+        force = strength * direction
 
         return force
+
+    def get_distance_and_direction(self, mover:NewtonMover) -> tuple[float,Vector]:
+        direction = self.position - mover.position
+        distance = direction.mag()
+        distance = constrain(distance, 5, 25)
+        direction.normalize()
+
+        return distance, direction
 
 if __name__ == '__main__':
     
